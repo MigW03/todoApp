@@ -4,19 +4,24 @@ import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList,
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
 
+var id = -1
 
 export default function todoApp() {
-  const [list, setList] = useState([])
-  const [inputData, setInputData] = useState('')
+  const [list, setList] = useState([]) //Creates the list state
+  const [inputData, setInputData] = useState('') // creates the TextInput state
 
   function addItem(index){
+    id += 1
+    let key = id.toString()
     Keyboard.dismiss()
     
+    //New object that will be puhed to the 'list' array
     let newItem = {
       name: inputData,
-      key: index.toString()
+      key: key
     }
 
+    //push newItem to the top of previous array
     setList((prevList) => {
       return[
         newItem,
@@ -28,12 +33,10 @@ export default function todoApp() {
   }
 
   function deleteItem(key){
-    setList((prevList) => {
-      let oldList = prevList.slice()
-      return oldList.splice(key, 1)
-    })
 
-    alert(JSON.stringify(list))
+    let newList = list.splice(key, 1)
+
+    setList(newList)
   }
 
   return (
@@ -43,16 +46,17 @@ export default function todoApp() {
       <View style={styles.container}>
         <FlatList
           data={list}
-          keyExtractor={(item, index) => index.toString()}
+          // keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListFooterComponent = {() => 
             <View style={{height: 100, backgroundColor: '#FFF'}} />
           }
           renderItem={({item, index}) => 
-            <TodoItem
-              title={item.name}
-              onPress={() => deleteItem(item.key)}
-            />
+              <TodoItem
+                title={item.name}
+                key = {item.key}
+                onPress={() => deleteItem(item.key)}
+              />
           }
         />
 
@@ -72,6 +76,8 @@ export default function todoApp() {
   );
 }
 
+
+//Styling the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,

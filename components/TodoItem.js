@@ -4,16 +4,19 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 export default class TodoItem extends React.Component{
     render(){
         return (
-            <View style={styles.itemContainer}>
-                <Text style={styles.text}>{this.props.title}</Text>
+             <View style={styles.itemContainer}>
+                 <Text style={styles.text}>{this.props.title}</Text>
                 <TouchableOpacity onPress={this.props.onPress}>
-                    <Text style={styles.delete}>Deletar</Text>
+                     <Text style={styles.delete}>Deletar</Text>
                 </TouchableOpacity>
             </View>
         );}
 }
 
 const styles = StyleSheet.create({
+    container: {
+
+    },
     itemContainer: {
         alignItems: 'center',
         justifyContent: 'space-between',
