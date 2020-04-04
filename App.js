@@ -1,14 +1,31 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar} from 'react-native';
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar, AsyncStorage} from 'react-native';
 
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
 
 var id = 0
 
+//Recover AsynStorage saved Array
+var savedList = async() => {
+  try{
+    return await JSON.parse(AsyncStorage.getItem('todoArray'))
+  }catch(err){
+    alert('Something went wrong recovering the saved data') // Error => Invariant ilation: Tried to get frame out of range index NaN
+}}
+
 export default function todoApp() {
-  const [list, setList] = useState([]) //Creates the list state
+  const [list, setList] = useState(savedList || []) //Creates the list state, wich starts either with the savedList or an empty Array
   const [inputData, setInputData] = useState('') // creates the TextInput state
+
+  //Save the list state on a 'todoArray' key of AsyncStorage
+  function saveData(){
+    try{
+      AsyncStorage.setItem('todoArray', JSON.stringify(list))
+    }catch(err){
+      alert('Erro ao salvar dados')
+    }
+  }
 
   function addItem(){
     id += 1
@@ -33,6 +50,7 @@ export default function todoApp() {
     })
 
     setInputData('')
+    saveData()
   }
 
   function deleteItem(key){
