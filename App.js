@@ -1,24 +1,27 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar } from 'react-native';
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar} from 'react-native';
 
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
 
-var id = -1
+var id = 0
 
 export default function todoApp() {
   const [list, setList] = useState([]) //Creates the list state
   const [inputData, setInputData] = useState('') // creates the TextInput state
 
-  function addItem(index){
+  function addItem(){
     id += 1
-    let key = id.toString()
+    key = id.toString()
     Keyboard.dismiss()
+
+    // random = Math.random().toString()
     
     //New object that will be puhed to the 'list' array
     let newItem = {
       name: inputData,
       key: key
+      // key: inputData + random
     }
 
     //push newItem to the top of previous array
@@ -33,8 +36,7 @@ export default function todoApp() {
   }
 
   function deleteItem(key){
-
-    let newList = list.splice(key, 1)
+    let newList = list.filter(item => item.key !== key)
 
     setList(newList)
   }
@@ -54,7 +56,7 @@ export default function todoApp() {
           renderItem={({item, index}) => 
               <TodoItem
                 title={item.name}
-                key = {item.key}
+                key = {index}
                 onPress={() => deleteItem(item.key)}
               />
           }
