@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 
+import Icon from 'react-native-vector-icons/Feather'
+
 export default class TodoItem extends React.Component{
     render(){
         return (
              <View style={styles.itemContainer}>
                  <Text style={styles.text}>{this.props.title}</Text>
-                <TouchableOpacity onPress={this.props.onPress}>
-                     <Text style={styles.delete}>Deletar</Text>
+                <TouchableOpacity onPress={this.props.onPress} style={styles.touch}>
+                     <Icon name='trash-2' color='#e60000' size={25}/>
                 </TouchableOpacity>
             </View>
         );}
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderStyle: 'dashed',
         margin: 10,
-        padding: 6,
+        // padding: 6,
         width: '80%',
         alignSelf: 'center'
     },
@@ -34,12 +36,13 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         color: '#000',
-        margin: 4,
-        marginLeft: 10
+        margin: 10,
+        marginLeft: 16
     },
-    delete: {
-        color: 'red',
-        fontSize: 14,
-        margin: 6
+    touch: {
+        width: '15%',
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 })

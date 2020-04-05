@@ -1,56 +1,40 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar, AsyncStorage} from 'react-native';
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar} from 'react-native';
 
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
 
-var id = 0
-
-//Recover AsynStorage saved Array
-var savedList = async() => {
-  try{
-    return await JSON.parse(AsyncStorage.getItem('todoArray'))
-  }catch(err){
-    alert('Something went wrong recovering the saved data') // Error => Invariant ilation: Tried to get frame out of range index NaN
-}}
-
 export default function todoApp() {
-  const [list, setList] = useState(savedList || []) //Creates the list state, wich starts either with the savedList or an empty Array
+  const [list, setList] = useState([
+    {name: 'teste', key: '0'}
+  ]) //Creates the list state, wich starts either with the savedList or an empty Array
   const [inputData, setInputData] = useState('') // creates the TextInput state
 
-  //Save the list state on a 'todoArray' key of AsyncStorage
-  function saveData(){
-    try{
-      AsyncStorage.setItem('todoArray', JSON.stringify(list))
-    }catch(err){
-      alert('Erro ao salvar dados')
-    }
-  }
-
   function addItem(){
-    id += 1
-    key = id.toString()
     Keyboard.dismiss()
 
-    // random = Math.random().toString()
+    if(inputData.length > 0){
+      random = Math.random().toString()
     
-    //New object that will be puhed to the 'list' array
-    let newItem = {
-      name: inputData,
-      key: key
-      // key: inputData + random
+      //New object that will be puhed to the 'list' array
+      let newItem = {
+        name: inputData,
+        key: inputData + random
+      }
+
+      //push newItem to the top of previous array
+      setList((prevList) => {
+        return[
+          newItem,
+          ...prevList
+        ]
+      })
+    }
+    else{
+      alert('Por favor, digite algo!!')
     }
 
-    //push newItem to the top of previous array
-    setList((prevList) => {
-      return[
-        newItem,
-        ...prevList
-      ]
-    })
-
     setInputData('')
-    saveData()
   }
 
   function deleteItem(key){
