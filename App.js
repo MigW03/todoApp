@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar} from 'react-native';
+import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar, ToastAndroid} from 'react-native';
 
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
@@ -41,6 +41,8 @@ export default function todoApp() {
     let newList = list.filter(item => item.key !== key)
 
     setList(newList)
+    ToastAndroid.show('Tarefa removida!!', ToastAndroid.LONG)
+
   }
 
   return (
