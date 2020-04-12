@@ -1,14 +1,25 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar, ToastAndroid} from 'react-native';
+import {StyleSheet, View, TextInput, TouchableOpacity, Keyboard, FlatList, StatusBar, ToastAndroid, Alert} from 'react-native';
+
+import AsyncStorage from '@react-native-community/async-storage'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import Header from './components/Header'
 import TodoItem from './components/TodoItem'
 
 export default function todoApp() {
-  const [list, setList] = useState([
-    {name: 'teste', key: '0'}
-  ]) //Creates the list state, wich starts either with the savedList or an empty Array
+  const [list, setList] = useState(getArray) //Creates the list state, wich starts either with the savedList or an empty Array
   const [inputData, setInputData] = useState('') // creates the TextInput state
+
+  async function getArray(){
+    try{
+      const retrievedData = await AsyncStorage.getItem('savedList') //Retrieves data from storage
+
+      setList(JSON.parse(retrievedData) || []) //If the data is different than null, set the state to teh data retrived, if not, set to an empty array
+    }catch(err){
+      Alert.alert('Erro ao carregar seus dados','Por favor, reabra o seu aplicativo!!')
+    }
+  }
 
   function addItem(){
     Keyboard.dismiss()
@@ -22,18 +33,14 @@ export default function todoApp() {
         key: inputData + random
       }
 
-      //push newItem to the top of previous array
-      setList((prevList) => {
-        return[
-          newItem,
-          ...prevList
-        ]
-      })
+      //push newItem to the begining of array
+      list.unshift(newItem)
     }
     else{
-      alert('Por favor, digite algo!!')
+      Alert.alert('Nova tarefa', 'Por favor, digite algo antes de adicionar sua tarefa')
     }
 
+    saveToStorage(list) //Saves the list to Storage
     setInputData('')
   }
 
@@ -41,8 +48,16 @@ export default function todoApp() {
     let newList = list.filter(item => item.key !== key)
 
     setList(newList)
-    ToastAndroid.show('Tarefa removida!!', ToastAndroid.LONG)
+    ToastAndroid.show('Tarefa removida!!', ToastAndroid.SHORT) //print a message indicating that the task was removed
+    saveToStorage(newList) //Saves the array to storage
+  }
 
+  async function saveToStorage(dataToSave){
+    try{
+      await AsyncStorage.setItem('savedList', JSON.stringify(dataToSave)) //Set the key value pair in the storage
+    }catch(err){
+      Alert.alert('Erro ao salvar', 'Por favor, tente adicionar a tarefa novamente.')
+    }
   }
 
   return (
@@ -52,7 +67,6 @@ export default function todoApp() {
       <View style={styles.container}>
         <FlatList
           data={list}
-          // keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListFooterComponent = {() => 
             <View style={{height: 100, backgroundColor: '#FFF'}} />
@@ -74,7 +88,7 @@ export default function todoApp() {
             onChangeText={text => setInputData(text)}
           />
           <TouchableOpacity style={styles.touch} onPress={addItem}>
-            <Text style={styles.touchText}>+</Text>
+            <MaterialIcon name='send' size={24} color='#FFF'/>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,9 +132,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  touchText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFF',
-  }
 })
